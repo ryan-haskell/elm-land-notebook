@@ -23,6 +23,7 @@ port module Effect exposing
 import Browser.Navigation
 import Dict exposing (Dict)
 import Http
+import Json.Encode
 import Route exposing (Route)
 import Route.Path
 import Shared.Model
@@ -213,5 +214,27 @@ toCmd options effect =
             Task.succeed sharedMsg
                 |> Task.perform options.fromSharedMsg
 
-        SendToElmCompiler { elmCode } ->
-            sendToElmCompilerPort { elmCode = elmCode }
+        SendToElmCompiler { elmCode, onResponse } ->
+            Http.post
+                { url = "http://localhost:8007/api/compile"
+                , body =
+                    Http.jsonBody
+                        (Json.Encode.object
+                            [ ( "elmCode"
+                              , Json.Encode.string elmCode
+                              )
+                            ]
+                        )
+                , expect =
+                    Http.expectWhatever
+                        (\result ->
+                            result
+                                |> Result.map (\_ -> "Nice!")
+                                |> onResponse
+                        )
+                }
+
+
+
+-- sendToElmCompilerPort
+-- { elmCode = elmCode }

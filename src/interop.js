@@ -6,16 +6,6 @@ export const flags = async ({ env }) => {
 // This function is called once your Elm app is running
 export const onReady = ({ app, env }) => {
   app.ports.sendToElmCompilerPort.subscribe(({ elmCode }) => {
-    console.log(`
-module Main exposing (..)
-
-import Html exposing (..)
-
-
-main =
-    text ""
-
-${elmCode}
-    `.trim())
+    console.log('hi')
   })
 }
